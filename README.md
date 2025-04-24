@@ -71,3 +71,6 @@ All pipeline steps require appropriate containers for reproducibility. Some are 
 
 ### License
 This project is licensed under the MIT License; however, please ensure compliance with the licenses of any third-party software used within this pipeline.
+
+## Authors
+Rob Moccia, Melis Atalar Aksit, Abby Hill
