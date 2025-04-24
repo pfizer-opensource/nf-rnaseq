@@ -1,0 +1,206 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://raw.githubusercontent.com/PfizerRD/rdru-nextflow/dev/nextflow_schema.json",
+    "title": "rdru-nextflow pipeline parameters",
+    "description": "RNAseq analysis pipeline including local splice variant quantification with MAJIQ, tailored for the identification of novel splice junctions.",
+    "type": "object",
+    "definitions": {
+        "main": {
+            "title": "Main",
+            "type": "object",
+            "description": "Main pipeline parameters",
+            "default": "",
+            "properties": {
+                "input": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "description": "Full path to directory containing fastq folder and SampleSheet.csv"
+                },
+                "outdir": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "description": "Full path to directory where output should be saved"
+                },
+                "fastq_dir": {
+                    "type": "string",
+                    "description": "Optional path to fastq directory (CAUTION: only use if there is not a fastq subdirectory in the input directory!)",
+                    "hidden": true
+                },
+                "allow_missing_samples": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Produce warning instead of error if fastq files are not found for all samples in SampleSheet.csv"
+                },
+                "trim_reads": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Trim reads with fastp"
+                }
+            },
+            "required": [
+                "input",
+                "outdir"
+            ]
+        },
+        "genome": {
+            "title": "Genome",
+            "type": "object",
+            "description": "Reference genome parameters",
+            "default": "",
+            "properties": {
+                "genome_registry": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "description": "Full path to the genome registry"
+                },
+                "genome_id": {
+                    "type": "string",
+                    "description": "The base reference genome formatted as <build:version> (e.g., GRCh38:107)"
+                },
+                "system_name": {
+                    "type": "string",
+                    "description": "Compute environment that pipeline will run on, used by genome_registry to determine paths to reference files"
+                },
+                "add_genes": {
+                    "type": "string",
+                    "description": "IDs of user-specified genes to add to reference genome, if any",
+                    "default": null
+                }
+            },
+            "required": [
+                "genome_registry",
+                "genome_id",
+                "system_name"
+            ]
+        },
+        "star": {
+            "title": "STAR",
+            "type": "object",
+            "description": "STAR parameters",
+            "default": "",
+            "properties": {
+                "star_2pass": {
+                    "type": "boolean",
+                    "description": "Run STAR in 2-pass mode",
+                    "default": false
+                },
+                "junctions": {
+                    "type": "string",
+                    "format": "file-path",
+                    "description": "Optional path to a junctions file in STAR SJ.out format",
+                    "help_text": "The default value of 'NO_FILE' is a special input that tells relevant STAR modules to ignore the parameter.",
+                    "default": "NO_FILE",
+                    "hidden": true
+                },
+                "readlength": {
+                    "type": "integer",
+                    "description": "Read length used for sequencing (used by STAR genomeGenerate)",
+                    "default": 101
+                }
+            }
+        },
+        "majiq": {
+            "title": "MAJIQ",
+            "type": "object",
+            "description": "MAJIQ parameters",
+            "default": "",
+            "properties": {
+                "run_majiq": {
+                    "type": "boolean",
+                    "description": "Run MAJIQ local splice variant quantification",
+                    "default": false
+                }
+            }
+        },
+        "resources": {
+            "title": "Resources/Performance",
+            "type": "object",
+            "description": "Parameters controlling resource requests and performance",
+            "default": "",
+            "properties": {
+                "high_depth": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Allocate additional resources for high-depth samples",
+                    "help_text": "If True, allocates more resources for alignment. Recommended for samples with > 75 million reads."
+                },
+                "rebuild_genome": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Rebuild the STAR index with first pass novel junctions once for all samples",
+                    "help_text": "If True, regenerate the STAR index incorporating novel junctions before pass 2. If False, junctions are added on-the-fly for each sample in pass 2."
+                },
+                "merge_bams": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Pool aligned reads from all first pass samples",
+                    "help_text": "If True, filter novel splice junctions after pooling aligned reads from all samples. If False, filter each sample independently."
+                },
+                "dev": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Run in development mode which requests minimal computational resources",
+                    "hidden": true
+                }
+            }
+        },
+        "validation": {
+            "title": "Validation",
+            "type": "object",
+            "description": "Validation, help, and logging parameters",
+            "default": "",
+            "properties": {
+                "validate_params": {
+                    "type": "boolean",
+                    "description": "Validate pipeline parameters before running",
+                    "default": true,
+                    "hidden": true
+                },
+                "show_hidden_params": {
+                    "type": "boolean",
+                    "description": "Show hidden parameters",
+                    "default": false,
+                    "hidden": true
+                },
+                "monochrome_logs": {
+                    "type": "boolean",
+                    "description": "Use monochrome coloring for terminal log",
+                    "default": false,
+                    "hidden": true
+                },
+                "schema_ignore_params": {
+                    "type": "string",
+                    "description": "Comma-separated list of parameters to skip validation on",
+                    "default": "",
+                    "hidden": true
+                },
+                "help": {
+                    "type": "boolean",
+                    "description": "Show help and exit",
+                    "default": false,
+                    "hidden": true
+                }
+            }
+        }
+    },
+    "allOf": [
+        {
+            "$ref": "#/definitions/main"
+        },
+        {
+            "$ref": "#/definitions/genome"
+        },
+        {
+            "$ref": "#/definitions/star"
+        },
+        {
+            "$ref": "#/definitions/majiq"
+        },
+        {
+            "$ref": "#/definitions/resources"
+        },
+        {
+            "$ref": "#/definitions/validation"
+        }
+     ]
+}

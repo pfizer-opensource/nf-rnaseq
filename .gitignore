@@ -1,0 +1,15 @@
+*.pyc
+**/__pycache__
+.DS_Store
+*.sif
+.vscode
+.nextflow.log
+.nextflow.log.*
+work
+.nextflow
+bin/.nextflow
+junkyard/*
+test_channel_operators.nf
+*.vscode
+tower_endpoint.config
+tower.config

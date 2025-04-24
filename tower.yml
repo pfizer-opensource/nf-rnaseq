@@ -1,0 +1,5 @@
+reports:
+  SampleSheetNextflow.csv:
+    display: "Samplesheet"
+  multiqc_report.html:
+    display: "MultiQC HTML report"

@@ -1,0 +1,44 @@
+module_order:
+  - salmon
+  - picard
+  - star
+  - fastp
+  - fastqc
+
+top_modules:
+  - 'fastqc':
+      name: "FASTQC (raw)"
+      path_filters:
+        - "*raw*"
+  - 'fastqc':
+      name: "FASTQC (trimmed)"
+      path_filters:
+        - "*postfastp*"
+  - 'fastp'
+  - 'star':
+      name: "STAR (pass 1)"
+      path_filters:
+        - "*_pass1_.Log.final.out"
+  - 'star':
+      name: "STAR (final)"
+      path_filters:
+        - "*[!_].Log.final.out"
+  - 'picard'
+
+report_section_order:
+  general_stats:
+    order: 80
+  fastqc:
+    order: 70
+  fastqc-1:
+    order: 60
+  fastp:
+    order: 50
+  star:
+    order: 40
+  picard:
+    order: 30
+  salmon:
+    order: 20
+  software_versions:
+    order: 10
